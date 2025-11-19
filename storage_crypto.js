@@ -1,8 +1,4 @@
 // storage_crypto.js
-// Simple Web Crypto helpers (PBKDF2 -> AES-GCM).
-// Exposes encryptCredentials(plaintext, passphrase) -> ArrayBuffer
-// and decryptCredentials(base64String, passphrase) -> plaintext string
-
 const _sc_encoder = new TextEncoder();
 const _sc_decoder = new TextDecoder();
 

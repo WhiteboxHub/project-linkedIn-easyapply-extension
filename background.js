@@ -1,15 +1,27 @@
 // background.js
-importScripts('storage_crypto.js'); 
+importScripts('storage_crypto.js');
 
 let running = false;
 let currentIndex = 0;
 let jobs = [];
 
-// Helper delay
+// Map of tabId -> { resolveReady, readyPromise } for content script handshake
+const tabReadyMap = new Map();
+
 function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   console.log('BG: received message', msg);
+  // Content script ready handshake
+  if (msg && msg.action === 'contentScriptReady' && sender && sender.tab && sender.tab.id) {
+    const entry = tabReadyMap.get(sender.tab.id);
+    console.log('BG: contentScriptReady from tab', sender.tab.id, 'entry?', !!entry);
+    if (entry && entry.resolveReady) {
+      entry.resolveReady();
+    }
+    sendResponse({ ok: true });
+    return;
+  }
 
   if (msg.action === 'encryptAndStore') {
     (async () => {
@@ -50,7 +62,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return;
   }
 
-  // Debug helper: load jobs
   if (msg.action === 'debugLoadJobs') {
     (async () => {
       try {
@@ -81,6 +92,65 @@ async function createTab(url) {
   });
 }
 
+function waitForTabComplete(tabId, timeout = 15000) {
+  return new Promise((resolve) => {
+    const start = Date.now();
+    function listener(updatedTabId, changeInfo, tab) {
+      if (updatedTabId !== tabId) return;
+      if (changeInfo.status === 'complete') {
+        chrome.tabs.onUpdated.removeListener(listener);
+        resolve(true);
+      } else if (Date.now() - start > timeout) {
+        chrome.tabs.onUpdated.removeListener(listener);
+        resolve(false);
+      }
+    }
+    chrome.tabs.onUpdated.addListener(listener);
+  });
+}
+
+
+function sendMessageToTab(tabId, message, timeout = 120000) { 
+  return new Promise((resolve, reject) => {
+    let responded = false;
+    try {
+      chrome.tabs.sendMessage(tabId, message, (resp) => {
+        responded = true;
+        const err = chrome.runtime.lastError;
+        if (err) {
+          return reject(err);
+        }
+        resolve(resp);
+      });
+    } catch (e) {
+      return reject(e);
+    }
+
+    setTimeout(() => {
+      if (!responded) {
+        reject(new Error('sendMessage timeout after ' + timeout + 'ms'));
+      }
+    }, timeout);
+  });
+}
+
+async function waitForContentScriptReady(tabId, timeout = 10000) {
+  if (tabReadyMap.has(tabId)) {
+    return tabReadyMap.get(tabId).readyPromise;
+  }
+  let resolveReady;
+  const readyPromise = new Promise((res) => { resolveReady = res; });
+  tabReadyMap.set(tabId, { resolveReady, readyPromise });
+
+  const timed = await Promise.race([
+    readyPromise.then(() => ({ ok: true })),
+    (async () => { await delay(timeout); return { ok: false }; })()
+  ]);
+
+  tabReadyMap.delete(tabId);
+  return timed.ok;
+}
+
 async function startApplyFlow(passphrase) {
   console.log('BG: startApplyFlow beginning');
   try {
@@ -92,7 +162,6 @@ async function startApplyFlow(passphrase) {
     return;
   }
 
-  // Attempt to decrypt stored password (not required; we use it only for diagnostics here)
   try {
     const stored = await chrome.storage.local.get(['linkedin_user', 'linkedin_pass_enc']);
     if (stored?.linkedin_pass_enc) {
@@ -111,6 +180,9 @@ async function startApplyFlow(passphrase) {
 
   currentIndex = 0;
 
+
+  const POST_APPLY_WAIT_MS = 25000; 
+
   while (running && currentIndex < jobs.length) {
     const job = jobs[currentIndex];
     const progressIndex = currentIndex + 1;
@@ -127,8 +199,9 @@ async function startApplyFlow(passphrase) {
       continue;
     }
 
-    // Wait for some (small) time for the page to start loading
-    await delay(2500);
+    await delay(1000);
+    const loaded = await waitForTabComplete(tab.id, 15000);
+    console.log('BG: waitForTabComplete returned', loaded);
 
     try {
       await chrome.scripting.executeScript({
@@ -138,26 +211,57 @@ async function startApplyFlow(passphrase) {
       console.log('BG: injected content_script into tab', tab.id);
     } catch (e) {
       console.error('BG: scripting.executeScript failed', e);
+      try { chrome.tabs.remove(tab.id); } catch(e){ }
+      currentIndex++;
+      continue;
     }
 
-    // Send message to content script and wait a short while for it to run
-    chrome.tabs.sendMessage(tab.id, { action: 'tryApply', job }, (resp) => {
-      if (chrome.runtime.lastError) {
-        console.warn('BG: sendMessage error (content script may not be ready):', chrome.runtime.lastError.message);
-      } else {
-        console.log('BG: sendMessage response from content script:', resp);
+    const ready = await waitForContentScriptReady(tab.id, 10000);
+    if (!ready) {
+      console.warn('BG: content script did not signal ready in time for tab', tab.id);
+
+    } else {
+      console.log('BG: content script signaled ready for tab', tab.id);
+    }
+
+    let resp = null;
+    try {
+      const CONTENT_SCRIPT_TIMEOUT_MS = 5 * 60 * 1000; 
+      resp = await sendMessageToTab(tab.id, { action: 'tryApply', job }, CONTENT_SCRIPT_TIMEOUT_MS);
+      console.log('BG: received tryApply response from tab', tab.id, resp);
+    } catch (e) {
+      console.warn('BG: sendMessage/response error for tab', tab.id, e.message || e);
+      try {
+        await delay(1000);
+        resp = await sendMessageToTab(tab.id, { action: 'tryApply', job }, 120000);
+        console.log('BG: retry got response', resp);
+      } catch (e2) {
+        console.error('BG: retry sendMessage also failed for tab', tab.id, e2.message || e2);
       }
-    });
+    }
 
-    // Wait conservatively (adjust if needed). This wait allows the content script to interact.
-    await delay(12000);
+    try {
+      if (resp && resp.result && resp.result.applied) {
+        console.log(`BG: content script reported applied=true for job ${job.jobId}. Waiting ${POST_APPLY_WAIT_MS}ms before closing tab.`);
+        await delay(POST_APPLY_WAIT_MS);
+      } else {
+        await delay(1000);
+      }
+    } catch (e) {
+      console.warn('BG: post-response wait failed', e);
+    }
 
-    // Close the tab if still open
     try {
       chrome.tabs.remove(tab.id);
       console.log('BG: closed tab', tab.id);
     } catch (e) {
       console.warn('BG: could not close tab', e);
+    }
+
+    if (!resp) {
+      console.warn(`BG: No response from content script for job ${job.jobId}. See earlier warnings/logs.`);
+    } else {
+      console.log(`BG: Content script response for job ${job.jobId}:`, resp);
     }
 
     currentIndex++;
@@ -166,6 +270,3 @@ async function startApplyFlow(passphrase) {
   console.log('BG: startApplyFlow exiting; running=', running, 'currentIndex=', currentIndex);
   running = false;
 }
-
-
-
