@@ -1,68 +1,99 @@
-🔧 How to Install
-1. Open Chrome
+📘 LinkedIn Easy Apply — Chrome Extension
 
-Go to:
+Automates LinkedIn Easy Apply submissions and exports a JSON report for each run.
+
+🚀 Features
+
+Auto-opens LinkedIn job pages and performs Easy Apply
+
+Select Candidate and Employee before starting
+
+Warning if user tries to start without selections
+
+Tracks all successfully submitted applications
+
+Exports one JSON file per run
+
+Crash-safe: recovers & exports unfinished runs on restart
+
+📁 Folder Structure
+
+chrome-extension/
+│
+├── icons/
+│   ├── icon16.png
+│   ├── icon48.png
+│   └── icon128.png
+│
+├── config/
+│   ├── candidates.json
+│   └── employees.json
+│
+├── background.js
+├── content_script.js
+├── popup.html
+├── popup.js
+├── easyapply_today.json
+├── manifest.json
+└── README.md
+
+
+🧩 Config Files
+config/candidates.json
+
+[
+  { "id": 1, "name": "Rohith" },
+  { "id": 2, "name": "Abhi" },
+  { "id": 3, "name": "Ram" }
+]
+
+config/employees.json
+
+[
+  { "id": 11, "name": "Suresh" },
+  { "id": 12, "name": "Mahesh" }
+]
+
+
+📄 Job List File
+easyapply_today.json
+
+[
+  {
+    "jobId": "123456789",
+    "title": "Software Engineer",
+    "company": "Google",
+    "location": "Bangalore"
+  }
+]
+
+
+🔧 Installation
+
+Open Chrome and go to:
 
 chrome://extensions/
 
-2. Enable Developer Mode
 
-Toggle Developer mode in the top-right.
+Enable Developer mode
 
-3. Load Unpacked Extension
+Click Load unpacked
 
-Click Load unpacked → select the chrome-extension/ folder.
+Select the chrome-extension/ folder
 
-4. Open Extension Popup
+Open the extension popup
 
-Click the extension icon
+Select:
 
-Enter an encryption passphrase
+Candidate
 
-Save encrypted credentials (optional)
+Employee
 
 Click Start Applying
 
-📝 How It Works
-1. background.js
 
-Loads easyapply_today.json
+📝 Run Log Export
 
-Opens job URL:
-https://www.linkedin.com/jobs/view/<JOB_ID>/
+At the end of each run, a JSON file downloads:
 
-Injects content_script.js
-
-Waits between job applications
-
-Closes the tab after processing
-
-2. content_script.js
-
-Finds the "Easy Apply" button
-
-Clicks it
-
-Attempts to find and submit the application modal
-
-(needs tuning depending on LinkedIn UI changes)
-
-3. storage_crypto.js
-
-Encrypts/decrypts LinkedIn credentials using AES-GCM
-
-Avoids storing plaintext passwords
-
-🔐 Credentials Storage
-
-Credentials are encrypted using:
-
-PBKDF2 key derivation
-
-AES-GCM encryption
-
-Random salt + IV
-
-Stored in Chrome local storage as base64.
-
-You must supply the same passphrase to decrypt credentials when running Start Apply.
+easyapply_run_<RUN_ID>_<timestamp>.json
