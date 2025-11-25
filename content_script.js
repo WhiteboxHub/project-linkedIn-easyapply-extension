@@ -758,6 +758,33 @@
 //     });
 //   }
 
+//   // ---------- Notification helper: notify background on confirmed submission ----------
+//   function notifySubmitted(jobInfo = {}) {
+//     try {
+//       // read currentSelection from storage (set by popup/background)
+//       chrome.storage.local.get(['currentSelection'], (data) => {
+//         const sel = data && data.currentSelection ? data.currentSelection : {};
+//         const payload = {
+//           type: 'application_submitted',
+//           candidate_id: sel.candidate_id || null,
+//           employee_id: sel.employee_id || null,
+//           jobInfo,
+//           timestamp: Date.now()
+//         };
+//         try {
+//           chrome.runtime.sendMessage(payload, (resp) => {
+//             // optional logging for debugging
+//             console.log('CS: notifySubmitted -> background', payload, resp);
+//           });
+//         } catch (e) {
+//           console.warn('CS: notifySubmitted sendMessage failed', e);
+//         }
+//       });
+//     } catch (e) {
+//       console.warn('CS: notifySubmitted storage read failed', e);
+//     }
+//   }
+
 //   // ---------- MAIN flow with clearer button-priority (Review -> Next -> Submit) ----------
 //   async function runApplySequence(job) {
 //     if (window.__cs_running) {
@@ -889,6 +916,26 @@
 //             console.log('CS: clicked submit, waiting', AFTER_SUBMIT_WAIT_MS, 'ms');
 //             try { await scrollModalToBottom(); } catch (e) {}
 //             await delay(AFTER_SUBMIT_WAIT_MS);
+
+//             // === SUCCESS: confirmed submitted ===
+//             try {
+//               // build a small jobInfo payload for logging (best-effort)
+//               const jobInfoForLog = Object.assign({}, job || {});
+//               if (!jobInfoForLog.jobUrl) {
+//                 jobInfoForLog.jobUrl = location.href;
+//               }
+//               if (!jobInfoForLog.jobTitle) {
+//                 // try to extract title from the modal or page
+//                 const modal = getModalRoot();
+//                 const titleEl = modal && modal.querySelector && (modal.querySelector('h1') || modal.querySelector('h2') || modal.querySelector('[data-test-job-title]')) ;
+//                 if (titleEl) jobInfoForLog.jobTitle = safeText(titleEl);
+//               }
+//               // notify background only for successful submissions
+//               notifySubmitted(jobInfoForLog);
+//             } catch (e) {
+//               console.warn('CS: notifySubmitted failed', e);
+//             }
+
 //             return { applied: true, reason: 'submitted', step, clickHistory };
 //           }
 //         } catch (e) {
@@ -923,6 +970,7 @@
 
 
 
+
 (function () {
   'use strict';
   console.log('CS: content_script (strict-error-guard + mutation-wait) loaded (updated button-priority + modal-scroll)');
@@ -952,6 +1000,31 @@
 
   // handshake
   try { chrome.runtime.sendMessage({ action: 'contentScriptReady' }, () => {}); } catch (e) {}
+
+  // ---------- Notification helper (NEW) ----------
+  // Notify background about a successful submission (best-effort).
+  // Stores currentSelection from chrome.storage.local (candidate/employee) with the job info.
+  function notifyBackgroundOfSubmission(job, timestamp) {
+    try {
+      chrome.storage.local.get(['currentSelection'], (data) => {
+        const sel = data.currentSelection || {};
+        const payload = {
+          type: 'application_submitted',
+          candidate_id: sel.candidate_id || null,
+          employee_id: sel.employee_id || null,
+          jobInfo: {
+            jobId: job && job.jobId ? String(job.jobId) : (job && job.id ? String(job.id) : null),
+            title: job && job.title ? job.title : null,
+            company: job && job.company ? job.company : null
+          },
+          timestamp: timestamp || new Date().toISOString()
+        };
+        try { chrome.runtime.sendMessage(payload, (resp) => { /* ignore response */ }); } catch (e) { console.warn('CS: notifyBackgroundOfSubmission send failed', e); }
+      });
+    } catch (e) {
+      console.error('CS: notifyBackgroundOfSubmission error', e);
+    }
+  }
 
   if (!window.__cs_message_installed) {
     chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
@@ -1683,33 +1756,6 @@
     });
   }
 
-  // ---------- Notification helper: notify background on confirmed submission ----------
-  function notifySubmitted(jobInfo = {}) {
-    try {
-      // read currentSelection from storage (set by popup/background)
-      chrome.storage.local.get(['currentSelection'], (data) => {
-        const sel = data && data.currentSelection ? data.currentSelection : {};
-        const payload = {
-          type: 'application_submitted',
-          candidate_id: sel.candidate_id || null,
-          employee_id: sel.employee_id || null,
-          jobInfo,
-          timestamp: Date.now()
-        };
-        try {
-          chrome.runtime.sendMessage(payload, (resp) => {
-            // optional logging for debugging
-            console.log('CS: notifySubmitted -> background', payload, resp);
-          });
-        } catch (e) {
-          console.warn('CS: notifySubmitted sendMessage failed', e);
-        }
-      });
-    } catch (e) {
-      console.warn('CS: notifySubmitted storage read failed', e);
-    }
-  }
-
   // ---------- MAIN flow with clearer button-priority (Review -> Next -> Submit) ----------
   async function runApplySequence(job) {
     if (window.__cs_running) {
@@ -1842,25 +1888,13 @@
             try { await scrollModalToBottom(); } catch (e) {}
             await delay(AFTER_SUBMIT_WAIT_MS);
 
-            // === SUCCESS: confirmed submitted ===
+            // ------------------ SUCCESS: notify background (NEW) ------------------
             try {
-              // build a small jobInfo payload for logging (best-effort)
-              const jobInfoForLog = Object.assign({}, job || {});
-              if (!jobInfoForLog.jobUrl) {
-                jobInfoForLog.jobUrl = location.href;
-              }
-              if (!jobInfoForLog.jobTitle) {
-                // try to extract title from the modal or page
-                const modal = getModalRoot();
-                const titleEl = modal && modal.querySelector && (modal.querySelector('h1') || modal.querySelector('h2') || modal.querySelector('[data-test-job-title]')) ;
-                if (titleEl) jobInfoForLog.jobTitle = safeText(titleEl);
-              }
-              // notify background only for successful submissions
-              notifySubmitted(jobInfoForLog);
+              notifyBackgroundOfSubmission(job, new Date().toISOString());
             } catch (e) {
-              console.warn('CS: notifySubmitted failed', e);
+              console.warn('CS: notifyBackgroundOfSubmission failed', e);
             }
-
+            // return success
             return { applied: true, reason: 'submitted', step, clickHistory };
           }
         } catch (e) {

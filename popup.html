@@ -60,118 +60,6 @@
     @keyframes spin { 0%{transform:rotate(0)}100%{transform:rotate(360deg)} }
     button[disabled]{opacity:0.55;cursor:not-allowed}
     .small{font-size:11px;color:rgba(255,255,255,0.75)}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <div class="panel" role="dialog" aria-label="LinkedIn EasyApply">
-      <div class="head">
-        <div class="logo" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h15A1.5 1.5 0 0 1 21 7.5V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7.5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M8 6.5V5.5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div style="flex:1">
-          <div class="title">LinkedIn EasyApply</div>
-          <div class="sub">Uses your logged-in session — opens jobs and attempts Easy Apply</div>
-        </div>
-        <div style="width:36px"></div>
-      </div>
-
-      <div class="controls">
-        <div style="flex:1"><button id="startBtn" class="btn">Start applying</button></div>
-        <div style="flex:1"><button id="stopBtn" class="btn secondary">Stop</button></div>
-      </div>
-
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <div style="flex:1"><button id="debugBtn" class="btn secondary">Debug: Load jobs</button></div>
-        <div style="width:44px"><button id="previewBtn" class="btn secondary" title="Preview"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:0.85"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z" stroke="currentColor" stroke-width="1.2"/></svg></button></div>
-      </div>
-
-      <div id="statusBox" class="status" style="margin-top:12px">
-        <div class="dot"></div>
-        <div class="text" id="statusText">Status: Idle</div>
-      </div>
-
-      <div id="jobs" class="jobs" aria-live="polite" style="margin-top:12px">
-        <div class="small">No job preview loaded. Click “Debug: Load jobs” to preview jobs from <code>easyapply_today.json</code>.</div>
-      </div>
-
-      <div class="footer">
-        <div class="small">No credentials stored — make sure you're signed into LinkedIn.</div>
-        <div class="small">v0.3</div>
-      </div>
-    </div>
-  </div>
-
-  <script src="popup.js"></script>
-</body>
-</html> -->
-
-
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>LinkedIn EasyApply — Quick</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    :root{
-      --linkedin:#0077b5;
-      --accent:#00c853;
-      --bg: linear-gradient(135deg, #0b66a3, #0ea56f);
-      --card-bg: rgba(255,255,255,0.06);
-      --muted: rgba(255,255,255,0.8);
-      --glass: rgba(255,255,255,0.03);
-      --radius: 14px;
-    }
-    *{box-sizing:border-box;font-family: "Segoe UI", Roboto, Arial, sans-serif;}
-    html,body{margin:0;padding:0;background:var(--bg);color:white;width:360px}
-    .wrap{padding:14px}
-    .panel{
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-      border-radius:var(--radius);
-      padding:12px;
-      box-shadow: 0 6px 20px rgba(2,6,23,0.5);
-      border:1px solid rgba(255,255,255,0.04);
-    }
-    .head{display:flex;align-items:center;gap:10px}
-    .logo{
-      width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;
-      border:1px solid rgba(255,255,255,0.03);
-      flex-shrink:0;
-    }
-    .logo svg{width:22px;height:22px}
-    .title{font-size:15px;font-weight:700;margin:0}
-    .sub{font-size:12px;color:rgba(255,255,255,0.8);margin-top:3px}
-    .controls{display:flex;gap:8px;margin-top:12px}
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:8px;
-      padding:10px 12px;border-radius:999px;border:none;cursor:pointer;font-weight:700;
-      font-size:13px;background:white;color:var(--linkedin);width:100%;
-      transition:all .12s ease;
-    }
-    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.08);color:white}
-    .btn.warn{background:transparent;border:1px solid rgba(255,255,255,0.08);color:#ffb4b4}
-    .btn:active{transform:translateY(1px)}
-    .row{display:flex;gap:8px}
-    .status{margin-top:12px;padding:10px;border-radius:10px;background:var(--card-bg);display:flex;align-items:center;gap:10px}
-    .dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.25)}
-    .status.processing .dot{animation: pulse 1.2s infinite; background: white}
-    @keyframes pulse { 0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)} }
-    .status .text{font-size:13px;color:var(--muted)}
-    .jobs{margin-top:12px;max-height:140px;overflow:auto;padding:8px;border-radius:10px;background:rgba(0,0,0,0.12)}
-    .job{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);margin-bottom:6px}
-    .jmeta{display:flex;flex-direction:column;gap:3px}
-    .jtitle{font-size:13px;font-weight:700}
-    .jcomp{font-size:12px;color:rgba(255,255,255,0.8)}
-    .jid{font-size:11px;color:rgba(255,255,255,0.6)}
-    .footer{margin-top:12px;display:flex;justify-content:space-between;align-items:center;color:rgba(255,255,255,0.7);font-size:12px}
-    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.45);border-top:2px solid white;border-radius:50%;animation: spin .8s linear infinite;margin-right:8px}
-    @keyframes spin { 0%{transform:rotate(0)}100%{transform:rotate(360deg)} }
-    button[disabled]{opacity:0.55;cursor:not-allowed}
-    .small{font-size:11px;color:rgba(255,255,255,0.75)}
     /* new fields */
     .selectRow{display:flex;gap:8px;margin-top:10px}
     .selectRow select{flex:1;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:white}
@@ -200,7 +88,6 @@
         <div style="flex:1"><button id="stopBtn" class="btn secondary">Stop</button></div>
       </div>
 
-      <!-- NEW: candidate + employee selects -->
       <div class="selectRow">
         <select id="candidateSelect" aria-label="Candidate">
           <option value="">— Select candidate —</option>
@@ -230,6 +117,81 @@
           <button id="exportBtn" class="exportBtn" title="Export applied log">Export</button>
           <div class="small">v0.3</div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html> -->
+
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LinkedIn EasyApply — Quick</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{--linkedin:#0077b5;--bg:linear-gradient(135deg,#0b66a3,#0ea56f);}
+    *{box-sizing:border-box;font-family:"Segoe UI",Roboto,Arial,sans-serif}
+    html,body{margin:0;padding:0;background:var(--bg);color:white;width:360px}
+    .wrap{padding:14px}
+    .panel{border-radius:12px;padding:12px}
+    .title{font-weight:700}
+    .controls{display:flex;gap:8px;margin-top:12px}
+    .btn{padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:700;background:white;color:var(--linkedin);width:100%}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.08);color:white}
+    .status{margin-top:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
+    .jobs{margin-top:12px;max-height:140px;overflow:auto;padding:8px;border-radius:10px;background:rgba(0,0,0,0.12)}
+    .small{font-size:11px;color:rgba(255,255,255,0.75)}
+    .selectRow{display:flex;gap:8px;margin-top:10px}
+    .selectRow select{flex:1;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:white}
+    .note{margin-top:8px;font-size:12px;color:rgba(255,255,255,0.8)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel" role="dialog" aria-label="LinkedIn EasyApply">
+      <div>
+        <div class="title">LinkedIn EasyApply</div>
+        <div class="small">Uses your logged-in session — opens jobs and attempts Easy Apply</div>
+      </div>
+
+      <div class="controls">
+        <div style="flex:1"><button id="startBtn" class="btn">Start applying</button></div>
+        <div style="flex:1"><button id="stopBtn" class="btn secondary">Stop</button></div>
+      </div>
+
+      <div class="selectRow">
+        <select id="candidateSelect" aria-label="Candidate">
+          <option value="">— Select candidate —</option>
+        </select>
+        <select id="employeeSelect" aria-label="Employee">
+          <option value="">— Select employee —</option>
+        </select>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <div style="flex:1"><button id="debugBtn" class="btn secondary">Debug: Load jobs</button></div>
+        <div style="width:44px"><button id="previewBtn" class="btn secondary" title="Preview">Preview</button></div>
+      </div>
+
+      <div id="statusBox" class="status" style="margin-top:12px">
+        <div class="text" id="statusText">Status: Idle</div>
+      </div>
+
+      <div id="jobs" class="jobs" aria-live="polite" style="margin-top:12px">
+        <div class="small">No job preview loaded. Click “Debug: Load jobs” to preview jobs from easyapply_today.json.</div>
+      </div>
+
+      <div class="note">
+        <div class="small">When you stop or when a run finishes, a single JSON file for that run will be downloaded and the extension will POST an aggregated summary to the configured server.</div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;">
+        <div class="small">Make sure you're signed into LinkedIn.</div>
+        <div class="small">v0.4</div>
       </div>
     </div>
   </div>

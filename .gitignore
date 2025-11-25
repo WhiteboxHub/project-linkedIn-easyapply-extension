@@ -1,0 +1,8 @@
+# Ignore Python cache files
+__pycache__/
+
+# Environments
+.env
+node_modules
+config/candidates.json
+config/employees.json
