@@ -1,0 +1,4 @@
+{
+  "api_url": "http://localhost:3000/api/job-activity",
+  "default_job_id": 14
+}

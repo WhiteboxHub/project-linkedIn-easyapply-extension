@@ -1,233 +1,902 @@
 [
   {
-    "jobId": "4323145090",
-    "title": "Engineering Manager (Python + React.JS + Gen AI)",
-    "company": "VidPro Consultancy Services",
-    "location": "Hyderabad, Telangana, India (Hybrid)"
-  },
-  {
-    "jobId": "4323243792",
-    "title": "AI/ML Engineer",
-    "company": "Edstem Technologies",
-    "location": "India (Remote)"
-  },
-  {
-    "jobId": "4336997658",
+    "jobId": "4324187219",
     "title": "Artificial Intelligence Engineer",
-    "company": "PANDIT AI",
+    "company": "DataOrbit AI",
     "location": "India (Remote)"
   },
   {
-    "jobId": "4323423572",
-    "title": "Polyglot Developer (Gen AI) - 100% Remote",
-    "company": "Connect Tech+Talent",
+    "jobId": "4335968867",
+    "title": "Artificial Intelligence Engineer",
+    "company": "Ascendion",
     "location": "India (Remote)"
   },
   {
-    "jobId": "4341412309",
-    "title": "Gen AI Lead",
-    "company": "ADP",
+    "jobId": "4324197724",
+    "title": "Artificial Intelligence Engineer",
+    "company": "ACL Digital",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4338691631",
+    "title": "AI Scientist",
+    "company": "Weekday AI (YC W21)",
+    "location": "Navi Mumbai, Maharashtra, India (Remote)"
+  },
+  {
+    "jobId": "4338745908",
+    "title": "Middle AI Engineer / Data Scientist",
+    "company": "Miratech",
+    "location": "Gurugram, Haryana, India"
+  },
+  {
+    "jobId": "4324128144",
+    "title": "Technical Team Lead",
+    "company": "PedaSys Learning Technology India",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4347403334",
+    "title": "Deep Learning Engineer",
+    "company": "Information Tech Consultants",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4305294091",
+    "title": "Sr AI Engineer",
+    "company": "Circuitry.ai",
     "location": "Hyderabad, Telangana, India (Hybrid)"
   },
   {
-    "jobId": "4323254007",
-    "title": "Full stack Architect-Python development",
-    "company": "Technogen India Pvt. Ltd.",
-    "location": "Hyderabad, Telangana, India (Hybrid)"
+    "jobId": "4338730628",
+    "title": "We’re Hiring – Senior Growth & AI Scaling Engineer – AI Voice Learning Platform",
+    "company": "COMPETITIVIA Andorre",
+    "location": "India (Remote)"
   },
   {
-    "jobId": "4323283435",
-    "title": "Full Stack Engineer",
-    "company": "ProSapiens HR",
+    "jobId": "4324249134",
+    "title": "Database Engineer - PostgreSQL",
+    "company": "ValueLabs",
     "location": "Hyderabad, Telangana, India (On-site)"
   },
   {
-    "jobId": "4323223641",
-    "title": "AI Integration Engineer",
-    "company": "NowWiN International",
+    "jobId": "4324276971",
+    "title": "Financial Modeler (Updated Salary)",
+    "company": "Nautical Staffing",
     "location": "India (Remote)"
   },
   {
-    "jobId": "4336818669",
+    "jobId": "4324269442",
+    "title": "TGT Computer Science",
+    "company": "Delhi Public School Dwarka Expressway",
+    "location": "Gurugram, Haryana, India (On-site)"
+  },
+  {
+    "jobId": "4324069733",
+    "title": "AI and Robotics trainer",
+    "company": "StepToStem",
+    "location": "Chandigarh, Chandigarh, India (On-site)"
+  },
+  {
+    "jobId": "4324208817",
+    "title": "Operations Data Lead",
+    "company": "Data Unveil",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4338900001",
+    "title": "CX Lead",
+    "company": "Lumos Labs (Lumosity)",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4324301658",
+    "title": "Social Media Manager",
+    "company": "MM NOVA TECH LTD",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4338830973",
+    "title": "(Remote) Full-Stack Developer | 5+ Years Experience",
+    "company": "Analytical Factor",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4324217436",
+    "title": "Research Engineer - Full Stack Development",
+    "company": "Centre for Digital Tech. in Healthcare (CDiTH), IIITH",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324199361",
+    "title": "Sr Operations Data Lead",
+    "company": "Data Unveil",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4347524374",
+    "title": "Gen AI Engineer(Data Scientist)",
+    "company": "Straive",
+    "location": "Gurugram, Haryana, India (Hybrid)"
+  },
+  {
+    "jobId": "4338925737",
+    "title": "Middle AI Engineer / Data Scientist",
+    "company": "Miratech",
+    "location": "Bagalur, Karnataka, India"
+  },
+  {
+    "jobId": "4347542491",
+    "title": "GEN AI with Vertex AI",
+    "company": "Capgemini",
+    "location": "Pune, Maharashtra, India (Hybrid)"
+  },
+  {
+    "jobId": "4347365064",
+    "title": "Full Stack Engineer |(Remote, Full-Time) [AS189]",
+    "company": "Smart Working",
+    "location": "Hyderabad, Telangana, India (Remote)"
+  },
+  {
+    "jobId": "4324236512",
+    "title": "Data Scientist - 3",
+    "company": "SatSure",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4347521818",
+    "title": "Freelance Machine Learning Engineer",
+    "company": "Leading MNC",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4324361761",
+    "title": "Generative AI Engineer (1–2 Years Experience)",
+    "company": "YMinds.AI",
+    "location": "Bengaluru, Karnataka, India (Hybrid)"
+  },
+  {
+    "jobId": "4324097646",
     "title": "Machine Learning Engineer",
-    "company": "goML",
-    "location": "India (Remote)"
+    "company": "ARC-Net | Applied Research Capability Network",
+    "location": "Bengaluru, Karnataka, India (On-site)"
   },
-
   {
-    "jobId": "4323264036",
-    "title": "Azure Generative AI Engineer",
-    "company": "LTIMindtree",
-    "location": "Hyderabad, Telangana, India (Hybrid)"
-  },
-
-  {
-    "jobId": "4341441417",
+    "jobId": "4338910982",
     "title": "AI Engineer",
-    "company": "Idea Elan India",
+    "company": "Calyptus",
     "location": "India (Remote)"
   },
   {
-    "jobId": "4323354737",
+    "jobId": "4347383537",
+    "title": "Personal Brand Strategist",
+    "company": "Ohh My Brand",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4338815630",
+    "title": "Middle AI Engineer / Data Scientist",
+    "company": "Miratech",
+    "location": "Chennai, Tamil Nadu, India"
+  },
+  {
+    "jobId": "4338881063",
+    "title": "AI Data Scientist",
+    "company": "SWITS DIGITAL Private Limited",
+    "location": "Bangalore Urban, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4324057309",
+    "title": "We’re Hiring: SAP Data Sphere Specialist (Full-Time | Hybrid)",
+    "company": "DiracAI Services",
+    "location": "Bhubaneswar, Odisha, India (On-site)"
+  },
+  {
+    "jobId": "4347452961",
+    "title": "Technical Lead(Flutter developer)",
+    "company": "Magure",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4324077007",
+    "title": "Tech Lead (Full Stack Developer)",
+    "company": "SSDB Tech Services",
+    "location": "Bangalore Urban, Karnataka, India (Remote)"
+  },
+  {
+    "jobId": "4347392924",
+    "title": "Technical Project Manager",
+    "company": "Sakar Robotics",
+    "location": "Pune, Maharashtra, India (On-site)"
+  },
+  {
+    "jobId": "4324127222",
+    "title": "Embedded Developer",
+    "company": "ApexPlus Technologies",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324500195",
+    "title": "Senior Generative AI Engineer",
+    "company": "Yarnit",
+    "location": "Bengaluru, Karnataka, India (Hybrid)"
+  },
+  {
+    "jobId": "4338690170",
+    "title": "AI Presales & Lead Generation Specialist (implement AI tools, marketing)",
+    "company": "Multiplier AI",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324116734",
+    "title": "Artificial Intelligence Engineer - ML",
+    "company": "Talentgigs",
+    "location": "Chennai, Tamil Nadu, India (On-site)"
+  },
+  {
+    "jobId": "4324244030",
+    "title": "AI/ML Engineer (DLMs, Embeddings, Fine-Tuning)",
+    "company": "B4B IT SOLUTIONS PVT LTD",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4347521983",
+    "title": "Machine Learning Engineer",
+    "company": "Discoveries Quintessential",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4338843865",
+    "title": "AI Data Engineer - 17852",
+    "company": "Turing",
+    "location": "Mumbai, Maharashtra, India (Remote)"
+  },
+  {
+    "jobId": "4324176733",
+    "title": "Lead Analyst - AIML Engineering",
+    "company": "Idyaite",
+    "location": "Mangaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4338821040",
+    "title": "Executive - Performance Marketing & Ecommerce Management",
+    "company": "Singhal Industries Pvt Ltd",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4324207832",
+    "title": "Deep Learning Engineer",
+    "company": "Ignitarium",
+    "location": "Chennai, Tamil Nadu, India (On-site)"
+  },
+  {
+    "jobId": "4324127207",
+    "title": "Executive Assistant",
+    "company": "ApexPlus Technologies",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324119392",
+    "title": "PL/SQL Developer",
+    "company": "Data Unveil",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324116645",
+    "title": "ML Ops Engineer - 2",
+    "company": "SatSure",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4324257620",
+    "title": "AI/ML Engineer (Data Scientist) | 5+ yrs | Fulltime | Hyderabad | AiFA Labs",
+    "company": "AiFA Labs",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324276826",
+    "title": "Project Manager - UI/UX & Web Projects",
+    "company": "sixjuly Design Studio",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4338923947",
+    "title": "AI Data Engineer - 17852",
+    "company": "Turing",
+    "location": "Bengaluru, Karnataka, India (Remote)"
+  },
+  {
+    "jobId": "4324267134",
+    "title": "Scala Developer",
+    "company": "Unify Technologies",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324097298",
+    "title": "Data Scientist...",
+    "company": "Talentgigs",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4338724237",
+    "title": "AI Data Engineer - 17852",
+    "company": "Turing",
+    "location": "Vishakhapatnam, Andhra Pradesh, India (Remote)"
+  },
+  {
+    "jobId": "4338825699",
+    "title": "Middle AI Engineer / Data Scientist",
+    "company": "Miratech",
+    "location": "Pune, Maharashtra, India"
+  },
+  {
+    "jobId": "4347323094",
     "title": "Data Engineer",
-    "company": "Tata Consultancy Services",
+    "company": "CashKaro.com",
+    "location": "Gurugram, Haryana, India (On-site)"
+  },
+  {
+    "jobId": "4338752275",
+    "title": "Associate Vice President - Senior Lead Security Detection Engineer [T500-21564]",
+    "company": "Deutsche Börse",
     "location": "Hyderabad, Telangana, India (On-site)"
   },
   {
-    "jobId": "4323233524",
-    "title": "AI Infrastructure & Performance Engineer",
-    "company": "NowWiN International",
-    "location": "India (Remote)"
-  },
-  {
-    "jobId": "4323353760",
-    "title": "AI Developer - ML & AI Agents (3 to 9 Years)",
-    "company": "AIMLEAP",
-    "location": "India (Remote)"
-  },
-  {
-    "jobId": "4341391787",
-    "title": "Agentic AI Developer",
-    "company": "R Systems",
-    "location": "India (Remote)"
-  },
-  {
-    "jobId": "4323323321",
-    "title": "Artificial Intelligence Engineer",
+    "jobId": "4324106958",
+    "title": "Python Architect || Contract Job || 9-18 Years Experience",
     "company": "People Prime Worldwide",
+    "location": "Hyderabad, Telangana, India (Hybrid)"
+  },
+  {
+    "jobId": "4324058138",
+    "title": "AI Expert Tutor for Video Editing & Designing",
+    "company": "The Art Code",
     "location": "Hyderabad, Telangana, India (On-site)"
   },
   {
-    "jobId": "4323223668",
-    "title": "Full Stack Engineer with AI/ML",
+    "jobId": "4324139373",
+    "title": "Technical Architect",
+    "company": "XpertOntime",
+    "location": "Gurugram, Haryana, India (On-site)"
+  },
+  {
+    "jobId": "4347514486",
+    "title": "AI Developer (Fresher)",
+    "company": "OP",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4324127503",
+    "title": "Animation Specialist",
+    "company": "Running Water creative studio",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4338794009",
+    "title": "AI Data Engineer - 17852",
+    "company": "Turing",
+    "location": "Kolkata, West Bengal, India (Remote)"
+  },
+  {
+    "jobId": "4324276663",
+    "title": "Web Developer",
+    "company": "Digital Jaipur",
+    "location": "Jaipur, Rajasthan, India (On-site)"
+  },
+  {
+    "jobId": "4338735826",
+    "title": "Senior AWS Lex Bot Developer",
+    "company": "Miratech",
+    "location": "Gurugram, Haryana, India"
+  },
+  {
+    "jobId": "4324057383",
+    "title": "Python Architect || Contract Job || 9-18 Years Experience",
     "company": "People Prime Worldwide",
+    "location": "Hyderabad, Telangana, India (Hybrid)"
+  },
+  {
+    "jobId": "4324167342",
+    "title": "React Native Engineer",
+    "company": "Hyperhire",
     "location": "India (Remote)"
   },
   {
-    "jobId": "4323403712",
-    "title": "Data Engineer",
-    "company": "Tata Consultancy Services",
+    "jobId": "4347355004",
+    "title": "AI Engineer (Data Pipelines & RAG)",
+    "company": "BeGig",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4338804066",
+    "title": "AI Data Engineer - 17852",
+    "company": "Turing",
+    "location": "Indore, Madhya Pradesh, India (Remote)"
+  },
+  {
+    "jobId": "4338732331",
+    "title": "Data Engineer III [T500-21570]",
+    "company": "McDonald's Global Office in India",
     "location": "Hyderabad, Telangana, India (On-site)"
   },
   {
-    "jobId": "4337015705",
-    "title": "Data Engineer- (Python) Data Processing",
-    "company": "MyRemoteTeam Inc",
+    "jobId": "4324196694",
+    "title": "AI tester/ experimentation engineer",
+    "company": "People Prime Worldwide",
+    "location": "Bengaluru, Karnataka, India (Hybrid)"
+  },
+  {
+    "jobId": "4347372934",
+    "title": "Lead Applied AI Engineer",
+    "company": "Taggd",
+    "location": "Gurugram, Haryana, India (On-site)"
+  },
+  {
+    "jobId": "4338775679",
+    "title": "Senior Google DialogFlow Engineer",
+    "company": "Miratech",
+    "location": "Kumara Venkata Bhupalapuram, Andhra Pradesh, India"
+  },
+  {
+    "jobId": "4324086879",
+    "title": "Senior Python / FastAPI Development Lead",
+    "company": "MindBrain",
     "location": "India (Remote)"
   },
   {
-    "jobId": "4341691436",
-    "title": "Data Engineer (Remote - India)",
-    "company": "Jobgether",
+    "jobId": "4324266832",
+    "title": "Tech Lead (Full stack)",
+    "company": "mple.ai",
+    "location": "Mumbai, Maharashtra, India (On-site)"
+  },
+  {
+    "jobId": "4324047090",
+    "title": "Junior Java Full Stack Developer",
+    "company": "DC Innovision",
     "location": "India (Remote)"
   },
   {
-    "jobId": "4323371668",
+    "jobId": "4347452372",
     "title": "Python Developer",
-    "company": "HonestAI - Building AI Powered Apps & Agentifying Companies",
+    "company": "Insightzz",
+    "location": "Pune, Maharashtra, India (On-site)"
+  },
+  {
+    "jobId": "4324206579",
+    "title": "Python Developer - Machine Learning",
+    "company": "Talentgigs",
+    "location": "Chennai, Tamil Nadu, India (On-site)"
+  },
+  {
+    "jobId": "4338711937",
+    "title": "SQL or Python Developer",
+    "company": "HRM Counsel",
     "location": "India (Remote)"
   },
   {
-    "jobId": "4341491575",
-    "title": "Prompt Engineer",
-    "company": "R Systems",
-    "location": "India (Remote)"
-  },
-  {
-    "jobId": "4337160055",
-    "title": "AI/ML Engineer (Intern)",
-    "company": "Digital Alpha Platforms",
-    "location": "India (Remote)"
-  },
-  {
-    "jobId": "4336866293",
-    "title": "Data Engineer- (Python)- LLMs",
-    "company": "MyRemoteTeam Inc",
-    "location": "India (Remote)"
-  },
-  {
-    "jobId": "4323224332",
-    "title": "Generative AI Engineer",
-    "company": "Tata Consultancy Services",
+    "jobId": "4324197757",
+    "title": "Content Writer",
+    "company": "VIYONA FINTECH INDIA PRIVATE LIMITED",
     "location": "Hyderabad, Telangana, India (On-site)"
   },
   {
-    "jobId": "4323314237",
-    "title": "AI Engineer (Backend) - Python",
-    "company": "Edstem Technologies",
-    "location": "India (Remote)"
+    "jobId": "4324207742",
+    "title": "AI Engineer",
+    "company": "In Time Tec",
+    "location": "Bengaluru, Karnataka, India (On-site)"
   },
   {
-    "jobId": "4341372366",
-    "title": "Senior Software Engineer",
-    "company": "TekXera",
-    "location": "Hyderabad, Telangana, India (Hybrid)"
-  },
-  {
-    "jobId": "4323253586",
-    "title": "AWS DATA ENGINEER",
-    "company": "People Prime Worldwide",
-    "location": "Hyderabad, Telangana, India (Hybrid)"
-  },
-  {
-    "jobId": "4323233849",
-    "title": "Software Engineer in Test",
+    "jobId": "4324166742",
+    "title": "Full Stack Engineer",
     "company": "Prophecy Technologies",
     "location": "Hyderabad, Telangana, India (Hybrid)"
   },
   {
-    "jobId": "4336918172",
-    "title": "Full Stack developer",
-    "company": "QualiZeal",
-    "location": "Hyderabad, Telangana, India (On-site)"
+    "jobId": "4338854012",
+    "title": "AI Data Engineer - 17852",
+    "company": "Turing",
+    "location": "Hyderabad, Telangana, India (Remote)"
   },
   {
-    "jobId": "4323450371",
+    "jobId": "4324117284",
     "title": "Data Engineer",
-    "company": "Clevanoo LLC",
-    "location": "India (Remote)"
-  },
-  {
-    "jobId": "4323423272",
-    "title": "DevOps Engineer",
-    "company": "Tata Consultancy Services",
+    "company": "Tekshiras Software Services Private Limited",
     "location": "Hyderabad, Telangana, India (On-site)"
   },
   {
-    "jobId": "4323313751",
-    "title": "AI Engineer",
-    "company": "MightyBot",
+    "jobId": "4324167058",
+    "title": "AI Engineer Intern",
+    "company": "Alchemic (previously Echo)",
     "location": "India (Remote)"
   },
-
   {
-    "jobId": "4323423252",
+    "jobId": "4324246476",
+    "title": "Fullstack developer",
+    "company": "People Prime Worldwide",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324420929",
+    "title": "Senior Full-Stack Developer (with LLM & Agentic AI Exposure)",
+    "company": "SandLogic",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4324269023",
+    "title": "Full Stack Developer – AI & Agent Systems",
+    "company": "Numerize AI",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324179274",
+    "title": "Technical Sales Engineer",
+    "company": "Perleybrook Labs Inc",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324269355",
+    "title": "Senior Performance Marketer Lead",
+    "company": "Building Pixels Academy",
+    "location": "Greater Hyderabad Area (On-site)"
+  },
+  {
+    "jobId": "4347492152",
+    "title": "AI Engineer (FoodTech) (MUMBAI LOCATION)",
+    "company": "LabelBlind®️",
+    "location": "Mumbai, Maharashtra, India (Remote)"
+  },
+  {
+    "jobId": "4324157026",
+    "title": "Visa - Executive",
+    "company": "Lex Visas",
+    "location": "Pune, Maharashtra, India (On-site)"
+  },
+  {
+    "jobId": "4324218496",
+    "title": "Senior Business Development Manager",
+    "company": "VIYONA FINTECH INDIA PRIVATE LIMITED",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324481615",
+    "title": "Autonomous AI Engineer",
+    "company": "Intellectt Inc",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324126644",
+    "title": "AI Solutions Architect",
+    "company": "TripFactory.com",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4324256557",
+    "title": "Machine Learning Engineer",
+    "company": "Webappclouds LLC",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324276413",
+    "title": "AI/ML 2–5 Years Experience",
+    "company": "AAVIL Inc",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4338741032",
+    "title": "AWS FullStack Developer",
+    "company": "Applogika",
+    "location": "Bengaluru, Karnataka, India (Hybrid)"
+  },
+  {
+    "jobId": "4324277219",
+    "title": "Senior Data Engineer",
+    "company": "DataOrbit AI",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4338700332",
+    "title": "Junior AI Developer",
+    "company": "Webdura Technologies",
+    "location": "Kochi, Kerala, India (On-site)"
+  },
+  {
+    "jobId": "4324226905",
+    "title": "AI/ML Engineer",
+    "company": "EXL",
+    "location": "Noida, Uttar Pradesh, India (Hybrid)"
+  },
+  {
+    "jobId": "4324371819",
+    "title": "Agentic AI Engineer",
+    "company": "Intellectt Inc",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324239287",
+    "title": "Digital Marketing Specialist",
+    "company": "LivSYT",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4323578615",
+    "title": "Full-Stack AI Engineer",
+    "company": "Devcansol Private Limited",
+    "location": "Chennai, Tamil Nadu, India (Remote)"
+  },
+  {
+    "jobId": "4324077538",
+    "title": "Quality Assessment Officer, South Asia",
+    "company": "The University of Western Australia",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4324089511",
+    "title": "AI Innovation Engineer",
+    "company": "Ashley Global Capability Center",
+    "location": "Chennai, Tamil Nadu, India (On-site)"
+  },
+  {
+    "jobId": "4338871528",
+    "title": "Technical Project Manager",
+    "company": "Impetus",
+    "location": "Pune, Maharashtra, India (On-site)"
+  },
+  {
+    "jobId": "4338773650",
+    "title": "Backend Python Engineer - 17852",
+    "company": "Turing",
+    "location": "Vishakhapatnam, Andhra Pradesh, India (Remote)"
+  },
+  {
+    "jobId": "4324228725",
+    "title": "ETL Test Lead – Banking/Financial Services Domain",
+    "company": "Flyers Soft",
+    "location": "Chennai, Tamil Nadu, India (Hybrid)"
+  },
+  {
+    "jobId": "4324136850",
+    "title": "Backend Engineer - Big Data",
+    "company": "Concentric AI",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4324216523",
+    "title": "Content Producer",
+    "company": "GO EC",
+    "location": "Kochi, Kerala, India (On-site)"
+  },
+  {
+    "jobId": "4324277282",
+    "title": "Engineering Manager",
+    "company": "Kapiva",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4347323617",
+    "title": "Research And Development Manager",
+    "company": "Foxtale",
+    "location": "Mumbai, Maharashtra, India (On-site)"
+  },
+  {
+    "jobId": "4347422034",
+    "title": "Lead Software Engineer",
+    "company": "Carousell Group",
+    "location": "Bengaluru, Karnataka, India (Remote)"
+  },
+  {
+    "jobId": "4338860223",
+    "title": "AEM Developer",
+    "company": "InfoDales Tech Solution",
+    "location": "Nagpur, Maharashtra, India (On-site)"
+  },
+  {
+    "jobId": "4324169567",
+    "title": "Jr Social Media Manager",
+    "company": "FoxMyBox",
+    "location": "New Delhi, Delhi, India (On-site)"
+  },
+  {
+    "jobId": "4347442527",
+    "title": "Gen AI developer",
+    "company": "Birlasoft",
+    "location": "Hyderabad, Telangana, India (Hybrid)"
+  },
+  {
+    "jobId": "4338910734",
     "title": "Software Engineer",
+    "company": "FasTutorAI",
+    "location": "Bengaluru, Karnataka, India (Remote)"
+  },
+  {
+    "jobId": "4347442345",
+    "title": "Digital Marketing Executive",
+    "company": "J Bulls Information Technology LLC",
+    "location": "Ahmedabad, Gujarat, India (On-site)"
+  },
+  {
+    "jobId": "4321924593",
+    "title": "Integration Engineer - AI",
+    "company": "apna",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4338800234",
+    "title": "Senior Engineering Manager [T500-21045]",
+    "company": "Marriott Tech Accelerator",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4324266610",
+    "title": "Azure data engineer",
+    "company": "People Prime Worldwide",
+    "location": "Kolkata, West Bengal, India (On-site)"
+  },
+  {
+    "jobId": "4324079064",
+    "title": "Senior Business Development Executive",
+    "company": "4k SPORTS INFRA PVT LTD",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4338813931",
+    "title": "Recruitment Specialist",
+    "company": "Ecostan India Pvt Ltd",
+    "location": "Ludhiana, Punjab, India (On-site)"
+  },
+  {
+    "jobId": "4347313111",
+    "title": "Structural Designer I",
+    "company": "KP & J Engineers Pvt. Ltd.",
+    "location": "Chennai, Tamil Nadu, India (On-site)"
+  },
+  {
+    "jobId": "4324136933",
+    "title": "Structural Engineer",
+    "company": "Orbis Structurals LLP",
+    "location": "Kochi, Kerala, India (On-site)"
+  },
+  {
+    "jobId": "4324267434",
+    "title": "Workflow Coordinator",
+    "company": "SLIDES FOR YOU™",
+    "location": "Thiruvananthapuram, Kerala, India (On-site)"
+  },
+  {
+    "jobId": "4324077060",
+    "title": "Cabin crew trainer",
+    "company": "Future Indo Global Services",
+    "location": "Noida, Uttar Pradesh, India (On-site)"
+  },
+  {
+    "jobId": "4338871090",
+    "title": "AM/DM, New Music (Tamil & Malayalam)",
+    "company": "Saregama India Ltd.",
+    "location": "Chennai, Tamil Nadu, India (On-site)"
+  },
+  {
+    "jobId": "4324380493",
+    "title": "AI Marketing Specialist",
+    "company": "Digital Web Solutions",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4338713982",
+    "title": "Python Developer - 17852",
+    "company": "Turing",
+    "location": "Vishakhapatnam, Andhra Pradesh, India (Remote)"
+  },
+  {
+    "jobId": "4338626034",
+    "title": "Senior Django/Python Software Engineer",
+    "company": "CapeZero",
+    "location": "India (Remote)"
+  },
+  {
+    "jobId": "4347402379",
+    "title": "Full Stack Engineer",
+    "company": "GeoServe",
+    "location": "Greater Bengaluru Area (On-site)"
+  },
+  {
+    "jobId": "4324269303",
+    "title": "Python Architect || Contract Job || 9-18 Years Experience",
     "company": "People Prime Worldwide",
     "location": "Hyderabad, Telangana, India (Hybrid)"
   },
   {
-    "jobId": "4323276547",
-    "title": "Senior Technical Software Architect",
-    "company": "Verticalmove, Inc",
-    "location": "India (Remote)"
-  },
-  {
-    "jobId": "4323384592",
-    "title": "Software Engineer",
+    "jobId": "4324280437",
+    "title": "27-Nov-25_Virtual Drive_ETL Test Engineer_(Extract, Transform, Load)",
     "company": "Tata Consultancy Services",
     "location": "Hyderabad, Telangana, India (On-site)"
   },
   {
-    "jobId": "4323245103",
-    "title": "Senior Full Stack Developer / AI Engineer (Freelance – Immediate Start)",
-    "company": "Innomax IT Solutions",
+    "jobId": "4324047449",
+    "title": "Python Developer",
+    "company": "Talentoj",
+    "location": "Noida, Uttar Pradesh, India (On-site)"
+  },
+  {
+    "jobId": "4347353056",
+    "title": "AI Expert + Python",
+    "company": "SystemBender",
+    "location": "Chennai, Tamil Nadu, India (Hybrid)"
+  },
+  {
+    "jobId": "4324196928",
+    "title": "Sales Digital Marketing Manager",
+    "company": "Corporate Thalam 25",
+    "location": "Chennai, Tamil Nadu, India (On-site)"
+  },
+  {
+    "jobId": "4324149264",
+    "title": "Java AWS Microservices Engineer",
+    "company": "SquareShift",
     "location": "Hyderabad, Telangana, India (On-site)"
   },
   {
-    "jobId": "4323382778",
-    "title": "Data Engineer",
-    "company": "OWOW",
-    "location": "India (Remote)"
+    "jobId": "4347473128",
+    "title": "Merchandiser",
+    "company": "KR CREATION",
+    "location": "Tiruppur, Tamil Nadu, India (On-site)"
+  },
+  {
+    "jobId": "4338700064",
+    "title": "Senior Software Engineer - Frontend ReactJS",
+    "company": "Sia",
+    "location": "Mumbai Metropolitan Region (On-site)"
+  },
+  {
+    "jobId": "4347383137",
+    "title": "Digital Marketing Manager",
+    "company": "digitalupgrowth",
+    "location": "Borivali, Maharashtra, India (On-site)"
+  },
+  {
+    "jobId": "4338853883",
+    "title": "Python Developer - 17852",
+    "company": "Turing",
+    "location": "Gurugram, Haryana, India (Remote)"
+  },
+  {
+    "jobId": "4324146591",
+    "title": "Administrative Specialist",
+    "company": "PIP Polymers Pvt Ltd",
+    "location": "Chennai, Tamil Nadu, India (On-site)"
+  },
+  {
+    "jobId": "4338874592",
+    "title": "Full-Stack Developer - 20414",
+    "company": "Turing",
+    "location": "Mysuru, Karnataka, India (Remote)"
+  },
+  {
+    "jobId": "4324117019",
+    "title": "Senior Copywriter",
+    "company": "Amura Health",
+    "location": "Chennai, Tamil Nadu, India (On-site)"
+  },
+  {
+    "jobId": "4324186984",
+    "title": "Fashion Design Intern",
+    "company": "Alore",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4324106900",
+    "title": "Customer Support Specialist",
+    "company": "People Prime Worldwide",
+    "location": "Hyderabad, Telangana, India (On-site)"
+  },
+  {
+    "jobId": "4225896335",
+    "title": "Manager",
+    "company": "EVERSANA",
+    "location": "Bengaluru, Karnataka, India (On-site)"
+  },
+  {
+    "jobId": "4338782588",
+    "title": "RBI Compliance – Nodal Officer",
+    "company": "Ola",
+    "location": "Bengaluru, Karnataka, India (On-site)"
   }
 ]

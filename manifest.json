@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "LinkedIn EasyApply",
-  "version": "0.3",
+  "version": "0.4",
   "description": "Opens LinkedIn job pages and attempts Easy Apply using the browser's logged-in session.",
   "permissions": [
     "storage",
     "tabs",
     "scripting",
-    "activeTab"
+    "activeTab",
+    "downloads"
   ],
   "host_permissions": [
     "https://www.linkedin.com/*"
@@ -27,5 +28,16 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "config/candidates.json",
+        "config/employees.json",
+        "config/api_config.json",
+        "easyapply_today.json"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
