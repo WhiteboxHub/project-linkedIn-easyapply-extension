@@ -146,17 +146,29 @@ async function updateCounts(row) {
   await fs.writeFile(countsPath, JSON.stringify(counts, null, 2));
 }
 
+function formatCsvLine(row) {
+  const timestamp = new Date().toISOString().replace('T', ' ').slice(0, 19);
+  const attempted = 'Easy Apply';
+  const result = 'Success';
+
+  // Extract company from notes like "Applied to Company Name via Project..."
+  let company = 'N/A';
+  if (row.notes && row.notes.includes('Applied to ')) {
+    company = row.notes.replace('Applied to ', '').split(' via ')[0];
+  } else if (row.notes) {
+    company = row.notes;
+  }
+
+  // Columns: Timestamp, JobID, Job Title, Company, Candidate, Employee, Attempted, Result
+  return `"${timestamp}","${row.job_id}","${row.job_name}","${company}","${row.candidate_name}","${row.employee_name}","${attempted}","${result}"`;
+}
+
 async function appendToCsv(row) {
   const candFile = row.candidate_name.replace(/\s+/g, '_').toLowerCase();
   const csvPath = path.join(OUTPUT_DIR, `${candFile}.csv`);
   const exists = await fs.access(csvPath).then(() => true).catch(() => false);
 
-  const timestamp = new Date().toISOString().replace('T', ' ').slice(0, 19);
-  const attempted = 'Easy Apply';
-  const result = 'Success';
-
-  // Columns: Timestamp, JobID, Job Title, Company, Candidate, Employee, Attempted, Result
-  const csvLine = `"${timestamp}","${row.job_id}","${row.job_name}","${row.notes.replace('Applied to ', '').split(' via ')[0]}","${row.candidate_name}","${row.employee_name}","${attempted}","${result}"\n`;
+  const csvLine = formatCsvLine(row) + "\n";
 
   if (!exists) {
     const header = "Timestamp,JobID,Job Title,Company,Candidate,Employee,Attempted,Result\n";
@@ -413,7 +425,7 @@ app.post('/api/job-activity', async (req, res) => {
             employee_name: r.employee_name || "Employee",
             activity_date: r.activity_date,
             activity_count: Number(r.activity_count),
-            notes: r.notes || `${r.job_name} | ${r.notes}`
+            notes: formatCsvLine(r)
           };
 
           // Simple POST - counts accumulate in counts.json and sync at startup
