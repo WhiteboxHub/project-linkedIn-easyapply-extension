@@ -1,0 +1,32 @@
+{
+  "sandeep": {
+    "easy_applied": 6,
+    "external": 0,
+    "failed": 0,
+    "skipped": 0,
+    "candidate_id": 98,
+    "candidate_name": "Sandeep",
+    "email": "Kaursandeep95.ip@gmail.com",
+    "employee_id": 125,
+    "employee_name": "Sunil Poli",
+    "last_synced_total": 6,
+    "last_synced_date": "2025-12-29",
+    "last_updated": "2025-12-28 06:31:28",
+    "last_error_date": ""
+  },
+  "Sri Devi Chenna": {
+    "easy_applied": 10,
+    "external": 0,
+    "failed": 0,
+    "skipped": 0,
+    "candidate_id": 93,
+    "candidate_name": "Sri Devi Chenna",
+    "email": "sdevic019@gmail.com",
+    "employee_id": 125,
+    "employee_name": "Sunil Poli",
+    "last_synced_total": 10,
+    "last_synced_date": "2025-12-29",
+    "last_updated": "2025-12-28 05:55:32",
+    "last_error_date": ""
+  }
+}

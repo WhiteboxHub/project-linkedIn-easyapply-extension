@@ -1,513 +1,3 @@
-// // background.js
-// // Start/stop run flow + per-run logging and single export per run
-
-// let running = false;
-// let currentIndex = 0;
-// let jobs = [];
-// let currentRunId = null; // string run id for the active run
-
-// // Map of tabId -> { resolveReady, readyPromise } for content script handshake
-// const tabReadyMap = new Map();
-
-// function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
-
-// // Storage keys
-// const STORAGE_KEYS = {
-//   LOG: 'applied_log',             // all-time cumulative log (array)
-//   COUNTS: 'counts',               // counts per candidate (object)
-//   CURRENT_SELECTION: 'currentSelection',
-//   CONFIG_CACHE: 'configCache',
-//   CURRENT_RUN_LOG: 'current_run_log', // entries for active run
-//   CURRENT_RUN_META: 'current_run_meta' // { runId, startedAt }
-// };
-
-// chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-//   console.log('BG: received message', msg);
-
-//   // Content script ready handshake
-//   if (msg && msg.action === 'contentScriptReady' && sender && sender.tab && sender.tab.id) {
-//     const entry = tabReadyMap.get(sender.tab.id);
-//     console.log('BG: contentScriptReady from tab', sender.tab.id, 'entry?', !!entry);
-//     if (entry && entry.resolveReady) {
-//       entry.resolveReady();
-//     }
-//     sendResponse({ ok: true });
-//     return;
-//   }
-
-//   // Start apply flow
-//   if (msg.action === 'startApply') {
-//     if (running) {
-//       sendResponse({ message: 'Already running' });
-//       return;
-//     }
-
-//     // Candidate/employee must be provided by popup (popup enforces it)
-//     const candidate_id = msg.candidate_id;
-//     const employee_id = msg.employee_id;
-
-//     if (typeof candidate_id === 'undefined' || typeof employee_id === 'undefined') {
-//       sendResponse({ message: 'Missing candidate_id or employee_id' });
-//       return;
-//     }
-
-//     // Save selection for content script to read
-//     chrome.storage.local.set({ [STORAGE_KEYS.CURRENT_SELECTION]: { candidate_id, employee_id, startedAt: Date.now() } }, () => {
-//       console.log('BG: saved currentSelection', candidate_id, employee_id);
-//     });
-
-//     // Start a new run session
-//     startNewRun().then(() => {
-//       running = true;
-//       (async () => {
-//         try {
-//           await startApplyFlow();
-//           console.log('BG: startApplyFlow finished normally');
-//           chrome.runtime.sendMessage({ from: 'background', type: 'done', text: 'Run finished' });
-//         } catch (e) {
-//           console.error('BG: startApplyFlow error', e);
-//           chrome.runtime.sendMessage({ from: 'background', type: 'error', text: String(e) });
-//         } finally {
-//           // ensure we export the run results when the run stops (even if stopped early)
-//           try {
-//             await finalizeRunAndExport();
-//           } catch (e) {
-//             console.error('BG: finalizeRunAndExport failed', e);
-//           }
-//           running = false;
-//         }
-//       })();
-//     }).catch(err => {
-//       console.error('BG: startNewRun failed', err);
-//     });
-
-//     sendResponse({ message: 'Start accepted' });
-//     return true; // async
-//   }
-
-//   if (msg.action === 'stopApply') {
-//     running = false;
-//     sendResponse({ message: 'Stopping' });
-//     return;
-//   }
-
-//   if (msg.action === 'debugLoadJobs') {
-//     (async () => {
-//       try {
-//         const data = await loadJobs();
-//         const jobsData = Array.isArray(data) ? data : (Array.isArray(data.jobs) ? data.jobs : []);
-//         sendResponse({ message: 'Jobs loaded', count: jobsData.length, jobs: jobsData });
-//       } catch (e) {
-//         sendResponse({ message: 'Failed to load jobs: ' + (e && e.message ? e.message : String(e)) });
-//       }
-//     })();
-//     return true;
-//   }
-
-//   // Manual export of global log
-//   if (msg.action === 'exportLog') {
-//     exportLog().then(() => {
-//       sendResponse({ ok: true });
-//     }).catch(err => {
-//       console.error('BG: exportLog failed', err);
-//       sendResponse({ ok: false, error: String(err) });
-//     });
-//     return true;
-//   }
-
-//   // Content script informing a successful submission
-//   if (msg.type === 'application_submitted') {
-//     handleSubmission(msg).then(() => {
-//       sendResponse({ ok: true });
-//     }).catch(err => {
-//       console.error('BG: handleSubmission error', err);
-//       sendResponse({ ok: false, error: String(err) });
-//     });
-//     return true;
-//   }
-
-//   sendResponse({ message: 'Unknown action' });
-//   return false;
-// });
-
-// // Load jobs JSON from extension file
-// async function loadJobs() {
-//   const url = chrome.runtime.getURL('easyapply_today.json');
-//   const resp = await fetch(url);
-//   if (!resp.ok) throw new Error('Failed to fetch jobs JSON: ' + resp.status);
-//   const data = await resp.json();
-//   return Array.isArray(data) ? data : (Array.isArray(data.jobs) ? data.jobs : []);
-// }
-
-// async function createTab(url) {
-//   return new Promise((resolve) => {
-//     chrome.tabs.create({ url, active: false }, (tab) => resolve(tab));
-//   });
-// }
-
-// function waitForTabComplete(tabId, timeout = 15000) {
-//   return new Promise((resolve) => {
-//     const start = Date.now();
-//     function listener(updatedTabId, changeInfo, tab) {
-//       if (updatedTabId !== tabId) return;
-//       if (changeInfo.status === 'complete') {
-//         chrome.tabs.onUpdated.removeListener(listener);
-//         resolve(true);
-//       } else if (Date.now() - start > timeout) {
-//         chrome.tabs.onUpdated.removeListener(listener);
-//         resolve(false);
-//       }
-//     }
-//     chrome.tabs.onUpdated.addListener(listener);
-//   });
-// }
-
-// function sendMessageToTab(tabId, message, timeout = 120000) {
-//   return new Promise((resolve, reject) => {
-//     let responded = false;
-//     try {
-//       chrome.tabs.sendMessage(tabId, message, (resp) => {
-//         responded = true;
-//         const err = chrome.runtime.lastError;
-//         if (err) {
-//           return reject(err);
-//         }
-//         resolve(resp);
-//       });
-//     } catch (e) {
-//       return reject(e);
-//     }
-
-//     setTimeout(() => {
-//       if (!responded) {
-//         reject(new Error('sendMessage timeout after ' + timeout + 'ms'));
-//       }
-//     }, timeout);
-//   });
-// }
-
-// async function waitForContentScriptReady(tabId, timeout = 10000) {
-//   if (tabReadyMap.has(tabId)) {
-//     return tabReadyMap.get(tabId).readyPromise;
-//   }
-//   let resolveReady;
-//   const readyPromise = new Promise((res) => { resolveReady = res; });
-//   tabReadyMap.set(tabId, { resolveReady, readyPromise });
-
-//   const timed = await Promise.race([
-//     readyPromise.then(() => ({ ok: true })),
-//     (async () => { await delay(timeout); return { ok: false }; })()
-//   ]);
-
-//   tabReadyMap.delete(tabId);
-//   return timed.ok;
-// }
-
-// async function startApplyFlow() {
-//   console.log('BG: startApplyFlow beginning');
-
-//   try {
-//     jobs = await loadJobs();
-//     console.log('BG: loaded jobs count =', jobs.length);
-//   } catch (e) {
-//     console.error('BG: loadJobs failed', e);
-//     running = false;
-//     return;
-//   }
-
-//   currentIndex = 0;
-//   const POST_APPLY_WAIT_MS = 25000;
-
-//   while (running && currentIndex < jobs.length) {
-//     const job = jobs[currentIndex];
-//     const progressIndex = currentIndex + 1;
-//     console.log(`BG: processing job ${progressIndex}/${jobs.length}`, job);
-//     const jobUrl = `https://www.linkedin.com/jobs/view/${job.jobId}`;
-
-//     let tab;
-//     try {
-//       tab = await createTab(jobUrl);
-//       console.log('BG: created tab', tab.id, 'url', jobUrl);
-//     } catch (e) {
-//       console.error('BG: createTab failed', e);
-//       currentIndex++;
-//       continue;
-//     }
-
-//     await delay(1000);
-//     const loaded = await waitForTabComplete(tab.id, 15000);
-//     console.log('BG: waitForTabComplete returned', loaded);
-
-//     try {
-//       await chrome.scripting.executeScript({
-//         target: { tabId: tab.id },
-//         files: ['content_script.js']
-//       });
-//       console.log('BG: injected content_script into tab', tab.id);
-//     } catch (e) {
-//       console.error('BG: scripting.executeScript failed', e);
-//       try { chrome.tabs.remove(tab.id); } catch (e2) {}
-//       currentIndex++;
-//       continue;
-//     }
-
-//     const ready = await waitForContentScriptReady(tab.id, 10000);
-//     if (!ready) {
-//       console.warn('BG: content script did not signal ready in time for tab', tab.id);
-//     } else {
-//       console.log('BG: content script signaled ready for tab', tab.id);
-//     }
-
-//     let resp = null;
-//     try {
-//       const CONTENT_SCRIPT_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
-//       resp = await sendMessageToTab(tab.id, { action: 'tryApply', job }, CONTENT_SCRIPT_TIMEOUT_MS);
-//       console.log('BG: received tryApply response from tab', tab.id, resp);
-//     } catch (e) {
-//       console.warn('BG: sendMessage/response error for tab', tab.id, e.message || e);
-//       try {
-//         await delay(1000);
-//         resp = await sendMessageToTab(tab.id, { action: 'tryApply', job }, 120000);
-//         console.log('BG: retry got response', resp);
-//       } catch (e2) {
-//         console.error('BG: retry sendMessage also failed for tab', tab.id, e2.message || e2);
-//       }
-//     }
-
-//     try {
-//       if (resp && resp.result && resp.result.applied) {
-//         console.log(`BG: content script reported applied=true for job ${job.jobId}. Waiting ${POST_APPLY_WAIT_MS}ms before closing tab.`);
-//         await delay(POST_APPLY_WAIT_MS);
-//       } else {
-//         await delay(1000);
-//       }
-//     } catch (e) {
-//       console.warn('BG: post-response wait failed', e);
-//     }
-
-//     try {
-//       chrome.tabs.remove(tab.id);
-//       console.log('BG: closed tab', tab.id);
-//     } catch (e) {
-//       console.warn('BG: could not close tab', e);
-//     }
-
-//     if (!resp) {
-//       console.warn(`BG: No response from content script for job ${job.jobId}. See earlier warnings/logs.`);
-//     } else {
-//       console.log(`BG: Content script response for job ${job.jobId}:`, resp);
-//     }
-
-//     currentIndex++;
-//   }
-
-//   console.log('BG: startApplyFlow exiting; running =', running, 'currentIndex =', currentIndex);
-//   running = false;
-// }
-
-// // ---- Run lifecycle helpers ----
-// function genRunId() {
-//   return `run-${Date.now()}`;
-// }
-
-// async function startNewRun() {
-//   currentRunId = genRunId();
-//   const meta = { runId: currentRunId, startedAt: new Date().toISOString() };
-//   // reset current run log
-//   return new Promise((resolve) => {
-//     chrome.storage.local.set({ [STORAGE_KEYS.CURRENT_RUN_META]: meta, [STORAGE_KEYS.CURRENT_RUN_LOG]: [] }, () => {
-//       console.log('BG: started new run', meta);
-//       resolve();
-//     });
-//   });
-// }
-
-// async function finalizeRunAndExport() {
-//   // read current run meta + log
-//   return new Promise((resolve, reject) => {
-//     chrome.storage.local.get([STORAGE_KEYS.CURRENT_RUN_META, STORAGE_KEYS.CURRENT_RUN_LOG], async (data) => {
-//       try {
-//         const meta = data[STORAGE_KEYS.CURRENT_RUN_META] || null;
-//         const runLog = data[STORAGE_KEYS.CURRENT_RUN_LOG] || [];
-//         if (!meta) {
-//           console.log('BG: no active run meta to finalize');
-//           return resolve();
-//         }
-//         // Export only if there are submissions in this run
-//         if (runLog.length === 0) {
-//           console.log('BG: run finished but no submissions to export for run', meta.runId);
-//           // clear current run meta/log
-//           chrome.storage.local.remove([STORAGE_KEYS.CURRENT_RUN_META, STORAGE_KEYS.CURRENT_RUN_LOG], () => resolve());
-//           return;
-//         }
-
-//         const exportObj = {
-//           runId: meta.runId,
-//           startedAt: meta.startedAt,
-//           exportedAt: new Date().toISOString(),
-//           submissions: runLog
-//         };
-
-//         const jsonStr = JSON.stringify(exportObj, null, 2);
-//         const filename = `easyapply_run_${meta.runId}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.json`;
-//         const url = 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonStr);
-
-//         chrome.downloads.download({
-//           url,
-//           filename,
-//           conflictAction: 'overwrite',
-//           saveAs: false
-//         }, (downloadId) => {
-//           if (chrome.runtime.lastError) {
-//             console.error('BG: run export download error', chrome.runtime.lastError);
-//             // still clear run meta/log to avoid repeated exports later
-//             chrome.storage.local.remove([STORAGE_KEYS.CURRENT_RUN_META, STORAGE_KEYS.CURRENT_RUN_LOG], () => {
-//               reject(chrome.runtime.lastError);
-//             });
-//           } else {
-//             console.log('BG: exported run file', filename, downloadId);
-//             // clear run meta/log
-//             chrome.storage.local.remove([STORAGE_KEYS.CURRENT_RUN_META, STORAGE_KEYS.CURRENT_RUN_LOG], () => {
-//               resolve(downloadId);
-//             });
-//           }
-//         });
-//       } catch (e) {
-//         reject(e);
-//       }
-//     });
-//   });
-// }
-
-// // ------- Submission logging -------
-// async function loadConfigCache() {
-//   return new Promise((resolve) => {
-//     chrome.storage.local.get([STORAGE_KEYS.CONFIG_CACHE], (data) => {
-//       if (data && data[STORAGE_KEYS.CONFIG_CACHE]) {
-//         resolve(data[STORAGE_KEYS.CONFIG_CACHE]);
-//       } else {
-//         fetch(chrome.runtime.getURL('config/config.json'))
-//           .then(r => r.json())
-//           .then(cfg => {
-//             chrome.storage.local.set({ [STORAGE_KEYS.CONFIG_CACHE]: cfg }, () => resolve(cfg));
-//           })
-//           .catch(() => resolve({ candidates: [], employees: [] }));
-//       }
-//     });
-//   });
-// }
-
-// async function handleSubmission(msg) {
-//   const cfg = await loadConfigCache();
-//   return new Promise((resolve, reject) => {
-//     chrome.storage.local.get([STORAGE_KEYS.LOG, STORAGE_KEYS.COUNTS, STORAGE_KEYS.CURRENT_RUN_LOG, STORAGE_KEYS.CURRENT_RUN_META], (data) => {
-//       try {
-//         const globalLog = data[STORAGE_KEYS.LOG] || [];
-//         const counts = data[STORAGE_KEYS.COUNTS] || {};
-//         const runLog = data[STORAGE_KEYS.CURRENT_RUN_LOG] || [];
-//         const runMeta = data[STORAGE_KEYS.CURRENT_RUN_META] || null;
-
-//         const candidate = (cfg.candidates || []).find(c => c.id === msg.candidate_id) || { id: msg.candidate_id, name: 'unknown' };
-//         const employee = (cfg.employees || []).find(e => e.id === msg.employee_id) || { id: msg.employee_id, name: 'unknown' };
-
-//         const entry = {
-//           candidate_id: candidate.id,
-//           candidate_name: candidate.name,
-//           employee_id: employee.id,
-//           employee_name: employee.name,
-//           jobInfo: msg.jobInfo || null,
-//           timestamp: new Date(msg.timestamp).toISOString()
-//         };
-
-//         // append to global log
-//         globalLog.push(entry);
-
-//         // append to current run log
-//         runLog.push(entry);
-
-//         // update counts
-//         const key = String(candidate.id);
-//         counts[key] = (counts[key] || 0) + 1;
-
-//         // persist
-//         chrome.storage.local.set({
-//           [STORAGE_KEYS.LOG]: globalLog,
-//           [STORAGE_KEYS.COUNTS]: counts,
-//           [STORAGE_KEYS.CURRENT_RUN_LOG]: runLog
-//         }, () => {
-//           // notify popup UI
-//           const text = `Submitted for candidate ${candidate.name} (id:${candidate.id}). Total: ${counts[key]}`;
-//           chrome.runtime.sendMessage({ from: 'background', type: 'progress', text });
-
-//           console.log('BG: recorded submission for run', runMeta && runMeta.runId, entry);
-//           resolve();
-//         });
-//       } catch (e) {
-//         reject(e);
-//       }
-//     });
-//   });
-// }
-
-// // Build aggregated JSON for entire global log and trigger download (manual export)
-// async function exportLog() {
-//   return new Promise((resolve, reject) => {
-//     chrome.storage.local.get([STORAGE_KEYS.LOG, STORAGE_KEYS.COUNTS], (data) => {
-//       try {
-//         const log = data[STORAGE_KEYS.LOG] || [];
-//         // aggregate per candidate
-//         const aggregated = {};
-//         log.forEach(entry => {
-//           const id = String(entry.candidate_id);
-//           if (!aggregated[id]) {
-//             aggregated[id] = {
-//               candidate_id: entry.candidate_id,
-//               candidate_name: entry.candidate_name,
-//               count: 0,
-//               lastApplied: null
-//             };
-//           }
-//           aggregated[id].count += 1;
-//           const t = new Date(entry.timestamp);
-//           if (!aggregated[id].lastApplied || new Date(aggregated[id].lastApplied) < t) {
-//             aggregated[id].lastApplied = t.toISOString();
-//           }
-//         });
-
-//         const rows = Object.values(aggregated);
-
-//         const exportObj = {
-//           exportedAt: new Date().toISOString(),
-//           summary: rows,
-//           raw: log
-//         };
-
-//         const jsonStr = JSON.stringify(exportObj, null, 2);
-//         const filename = `easyapply_log_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.json`;
-//         const url = 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonStr);
-
-//         chrome.downloads.download({
-//           url,
-//           filename,
-//           conflictAction: 'overwrite',
-//           saveAs: false
-//         }, (downloadId) => {
-//           if (chrome.runtime.lastError) {
-//             console.error('Download error', chrome.runtime.lastError);
-//             reject(chrome.runtime.lastError);
-//           } else {
-//             resolve(downloadId);
-//           }
-//         });
-//       } catch (e) {
-//         reject(e);
-//       }
-//     });
-//   });
-// }
-
-
-
 // background.js
 // Manages run lifecycle, receives submission messages from content script,
 // aggregates run log, downloads run JSON on finalize, and POSTs summary to server.
@@ -515,9 +5,10 @@
 let running = false;
 let currentIndex = 0;
 let jobs = [];
+let currentActiveTabId = null;
 const tabReadyMap = new Map();
 
-function delay(ms){ return new Promise(res=>setTimeout(res,ms)); }
+function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
 
 const STORAGE = {
   CURRENT_SELECTION: 'currentSelection',     // { candidate_id, employee_id, startedAt }
@@ -526,7 +17,7 @@ const STORAGE = {
 };
 
 // Recover unfinished run on service worker start and finalize it
-(async function recoverOnStart(){
+(async function recoverOnStart() {
   try {
     chrome.storage.local.get([STORAGE.CURRENT_RUN_META, STORAGE.CURRENT_RUN_LOG], async (data) => {
       const meta = data[STORAGE.CURRENT_RUN_META];
@@ -536,124 +27,95 @@ const STORAGE = {
         try { await finalizeRunAndExport(); } catch (e) { console.error('BG: recover finalize error', e); }
       }
     });
-  } catch(e) { console.error('BG: recoverOnStart error', e); }
+  } catch (e) { console.error('BG: recoverOnStart error', e); }
 })();
 
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (!msg) { sendResponse({ok:false}); return; }
+// Stop if the job tab is manually closed
+chrome.tabs.onRemoved.addListener((tabId) => {
+  if (running && tabId === currentActiveTabId) {
+    console.log('BG: Active job tab closed manually. Stopping extension.');
+    stopApplicationFlow('Job tab closed manually');
+  }
+});
 
-  // Content script ready handshake
+async function stopApplicationFlow(reason = 'Unknown') {
+  if (!running) return;
+  console.log(`BG: Stopping application flow. Reason: ${reason}`);
+  running = false;
+  currentActiveTabId = null;
+  try {
+    await finalizeRunAndExport();
+  } catch (e) {
+    console.error('BG: finalize error on stop', e);
+  }
+  chrome.runtime.sendMessage({ from: 'background', type: 'error', text: `Stopped: ${reason}` });
+}
+
+// Heartbeat removed to allow extension to follow user request: "if i stope the server to ity should work only post"
+// This means the extension continues even if local server is down, and only syncs at the end.
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (!msg) return;
+
   if (msg.action === 'contentScriptReady') {
     if (sender && sender.tab && sender.tab.id) {
       const entry = tabReadyMap.get(sender.tab.id);
       if (entry && entry.resolveReady) entry.resolveReady();
     }
-    sendResponse({ ok: true });
-    return;
+    sendResponse && sendResponse({ ok: true });
+    return true;
   }
 
-  // Start run
   if (msg.action === 'startApply') {
-    if (running) { sendResponse({ message: 'Already running' }); return; }
-    const candidate_id = msg.candidate_id;
-    const employee_id = msg.employee_id;
-    if (typeof candidate_id === 'undefined' || typeof employee_id === 'undefined' || !candidate_id || !employee_id) {
-      sendResponse({ message: 'Missing selection' }); return;
-    }
+    (async () => {
+      if (running) { sendResponse({ message: 'Already running' }); return; }
+      const { candidate_id, employee_id, jobsList } = msg;
 
-    // initialize run meta and log
-    const runMeta = { runId: `run-${Date.now()}`, startedAt: new Date().toISOString(), selection:{ candidate_id, employee_id } };
-    chrome.storage.local.set({
-      [STORAGE.CURRENT_SELECTION]: { candidate_id, employee_id, startedAt: Date.now() },
-      [STORAGE.CURRENT_RUN_META]: runMeta,
-      [STORAGE.CURRENT_RUN_LOG]: []
-    }, () => {
-      running = true;
-      // start the async flow
-      (async () => {
-        try {
-          await startApplyFlow();
-          // note: startApplyFlow will call finalizeRunAndExport when finished
-        } catch (e) {
+      if (!candidate_id || !employee_id) {
+        sendResponse({ message: 'Missing selection' }); return;
+      }
+
+      const runMeta = { runId: `run-${Date.now()}`, startedAt: new Date().toISOString(), selection: { candidate_id, employee_id } };
+      const storageData = {
+        [STORAGE.CURRENT_SELECTION]: { candidate_id, employee_id, startedAt: Date.now() },
+        [STORAGE.CURRENT_RUN_META]: runMeta,
+        [STORAGE.CURRENT_RUN_LOG]: []
+      };
+
+      if (Array.isArray(jobsList) && jobsList.length > 0) {
+        storageData['current_jobs_list'] = jobsList;
+      } else {
+        chrome.storage.local.remove('current_jobs_list');
+      }
+
+      chrome.storage.local.set(storageData, () => {
+        running = true;
+        startApplyFlow().catch(e => {
           console.error('BG: startApplyFlow error', e);
           chrome.runtime.sendMessage({ from: 'background', type: 'error', text: String(e) });
-          try { await finalizeRunAndExport(); } catch (ee) { console.error('BG: finalize after error failed', ee); }
-        } finally {
-          running = false;
-        }
-      })();
-    });
-
-    sendResponse({ message: 'Start accepted' });
-    return true;
-  }
-
-  // Stop run - will finalize current collected submissions
-  if (msg.action === 'stopApply') {
-    // toggles running flag off; finalizeRunAndExport will be called here to make sure we export whatever we've collected so far
-    (async () => {
-      if (!running) {
-        // if not running but meta exists, still finalize
-        try {
-          await finalizeRunAndExport();
-          sendResponse && sendResponse({ message: 'Stopped (no active run)' });
-        } catch (e) {
-          console.error('BG: stop finalize error', e);
-          sendResponse && sendResponse({ message: 'Stopped with error during finalize' });
-        }
-        return;
-      }
-      running = false;
-      // allow the main loop to finish current job; then call finalize
-      try {
-        await finalizeRunAndExport();
-        sendResponse && sendResponse({ message: 'Stopping and exported run' });
-      } catch (e) {
-        console.error('BG: stopFinalize error', e);
-        sendResponse && sendResponse({ message: 'Stopping; finalize failed: ' + String(e) });
-      }
-    })();
-    // indicate async response will be sent
-    return true;
-  }
-
-  // Debug: load jobs from easyapply_today.json
-  if (msg.action === 'debugLoadJobs') {
-    (async () => {
-      try {
-        const data = await loadJobs();
-        sendResponse({ message: 'Jobs loaded', count: data.length, jobs: data });
-      } catch (e) {
-        sendResponse({ message: 'Failed to load jobs: ' + String(e) });
-      }
-    })();
-    return true;
-  }
-
-  // Received from content_script when an application is successfully submitted
-  if (msg.type === 'application_submitted') {
-    // append to current run log
-    chrome.storage.local.get([STORAGE.CURRENT_RUN_META, STORAGE.CURRENT_RUN_LOG, STORAGE.CURRENT_SELECTION], (data) => {
-      const runLog = Array.isArray(data[STORAGE.CURRENT_RUN_LOG]) ? data[STORAGE.CURRENT_RUN_LOG] : [];
-      const sel = data[STORAGE.CURRENT_SELECTION] || {};
-      const entry = {
-        candidate_id: Number(msg.candidate_id || sel.candidate_id || 0),
-        employee_id: Number(msg.employee_id || sel.employee_id || 0),
-        jobInfo: msg.jobInfo || {},
-        timestamp: msg.timestamp || new Date().toISOString()
-      };
-      runLog.push(entry);
-      chrome.storage.local.set({ [STORAGE.CURRENT_RUN_LOG]: runLog }, () => {
-        const short = `Recorded submission for candidate ${entry.candidate_id} (job ${entry.jobInfo.jobId})`;
-        chrome.runtime.sendMessage({ from: 'background', type: 'progress', text: short });
-        sendResponse && sendResponse({ ok: true });
+        }).finally(() => { running = false; });
       });
-    });
+
+      sendResponse({ message: 'Start accepted' });
+    })();
     return true;
   }
 
-  sendResponse({ message: 'Unknown action' });
-  return;
+  if (msg.action === 'stopApply') {
+    (async () => {
+      await stopApplicationFlow('Stopped by user');
+      sendResponse && sendResponse({ message: 'Stopped and exported run' });
+    })();
+    return true;
+  }
+
+  if (msg.action === 'debugLoadJobs') {
+    loadJobs().then(data => sendResponse({ message: 'Jobs loaded', count: data.length, jobs: data }))
+      .catch(e => sendResponse({ message: 'Failed: ' + String(e) }));
+    return true;
+  }
+
+  // No-op for application_submitted because it is handled directly by the startApplyFlow loop now.
 });
 
 // -------------------- Helpers --------------------
@@ -663,7 +125,14 @@ async function loadJobs() {
   const resp = await fetch(url);
   if (!resp.ok) throw new Error('Failed to fetch jobs JSON: ' + resp.status);
   const data = await resp.json();
-  return Array.isArray(data) ? data : (Array.isArray(data.jobs) ? data.jobs : []);
+  const list = Array.isArray(data) ? data : (Array.isArray(data.jobs) ? data.jobs : []);
+  // Sort descending by jobId
+  list.sort((a, b) => {
+    const idA = String(a.jobId || '0');
+    const idB = String(b.jobId || '0');
+    return idB.localeCompare(idA, undefined, { numeric: true, sensitivity: 'base' });
+  });
+  return list;
 }
 
 async function createTab(url) {
@@ -704,14 +173,23 @@ async function waitForContentScriptReady(tabId, timeout = 10000) {
   let resolveReady;
   const readyPromise = new Promise(res => { resolveReady = res; });
   tabReadyMap.set(tabId, { resolveReady, readyPromise });
-  const timed = await Promise.race([ readyPromise.then(()=>({ok:true})), (async ()=>{ await delay(timeout); return {ok:false}; })() ]);
+  const timed = await Promise.race([readyPromise.then(() => ({ ok: true })), (async () => { await delay(timeout); return { ok: false }; })()]);
   tabReadyMap.delete(tabId);
   return timed.ok;
 }
 
 // -------------------- Main apply loop --------------------
 async function startApplyFlow() {
-  jobs = await loadJobs().catch(e=>{ console.error('BG: loadJobs error', e); return []; });
+  // Try to load custom jobs from storage first (pushed by popup), otherwise load from file
+  const data = await chrome.storage.local.get(['current_jobs_list']);
+  if (data && Array.isArray(data.current_jobs_list) && data.current_jobs_list.length > 0) {
+    jobs = data.current_jobs_list;
+    console.log(`BG: Using ${jobs.length} jobs from manual fetch/selection`);
+  } else {
+    jobs = await loadJobs().catch(e => { console.error('BG: loadJobs error', e); return []; });
+    console.log(`BG: Using ${jobs.length} jobs from easyapply_today.json`);
+  }
+
   currentIndex = 0;
   const POST_APPLY_WAIT_MS = 25000;
 
@@ -719,7 +197,10 @@ async function startApplyFlow() {
     const job = jobs[currentIndex];
     const jobUrl = `https://www.linkedin.com/jobs/view/${job.jobId}`;
     let tab;
-    try { tab = await createTab(jobUrl); } catch (e) { console.error('BG: createTab failed', e); currentIndex++; continue; }
+    try {
+      tab = await createTab(jobUrl);
+      currentActiveTabId = tab.id;
+    } catch (e) { console.error('BG: createTab failed', e); currentIndex++; continue; }
 
     await delay(1000);
     await waitForTabComplete(tab.id, 15000);
@@ -728,7 +209,7 @@ async function startApplyFlow() {
       await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['content_script.js'] });
     } catch (e) {
       console.error('BG: injecting content_script failed', e);
-      try { chrome.tabs.remove(tab.id); } catch (_) {}
+      try { chrome.tabs.remove(tab.id); } catch (_) { }
       currentIndex++;
       continue;
     }
@@ -737,9 +218,59 @@ async function startApplyFlow() {
 
     try {
       const CONTENT_SCRIPT_TIMEOUT_MS = 5 * 60 * 1000;
-      const resp = await sendMessageToTab(tab.id, { action: 'tryApply', job }, CONTENT_SCRIPT_TIMEOUT_MS).catch(e=>{ console.warn('BG: tryApply send error', e); return null; });
+      const resp = await sendMessageToTab(tab.id, { action: 'tryApply', job }, CONTENT_SCRIPT_TIMEOUT_MS).catch(e => { console.warn('BG: tryApply send error', e); return null; });
+
       if (resp && resp.result && resp.result.applied) {
-        // successful application recorded by content script (which also sent a message to store the submission)
+        console.log(`BG: Job ${job.jobId} marked as applied by content script.`);
+
+        // --- RELIABLE IMMEDIATE SYNC ---
+        // Get metadata for current run
+        const runData = await chrome.storage.local.get([STORAGE.CURRENT_RUN_META, STORAGE.CURRENT_SELECTION]);
+        const meta = runData[STORAGE.CURRENT_RUN_META] || {};
+        const sel = runData[STORAGE.CURRENT_SELECTION] || {};
+        const cId = Number(sel.candidate_id || 0);
+        const eId = Number(sel.employee_id || 0);
+
+        if (cId && eId) {
+          try {
+            // Load config for names
+            let cfg = { candidates: [], employees: [] };
+            try {
+              cfg.candidates = await fetch(chrome.runtime.getURL('config/candidates.json')).then(r => r.json());
+              cfg.employees = await fetch(chrome.runtime.getURL('config/employees.json')).then(r => r.json());
+            } catch (e) { }
+
+            const cand = (cfg.candidates || []).find(c => Number(c.id) === cId) || { name: 'unknown' };
+            const emp = (cfg.employees || []).find(e => Number(e.id) === eId) || { name: 'unknown' };
+
+            const row = {
+              job_id: job.jobId,
+              job_name: job.title || 'Unknown Job',
+              candidate_id: cId,
+              candidate_name: cand.name,
+              employee_id: eId,
+              employee_name: emp.name,
+              activity_date: new Date().toISOString().slice(0, 10),
+              activity_count: 1,
+              notes: `Applied to ${job.company || 'Unknown Company'} via Extension Loop`,
+              last_mod_date: new Date().toISOString()
+            };
+
+            console.log(`BG: [QUEUED] Candidate: ${cand.name} | Employee: ${emp.name} | Job: ${job.title} - Will sync on tab close or finish.`);
+
+            // Also record in internal log for finalize stats
+            chrome.storage.local.get([STORAGE.CURRENT_RUN_LOG], (data) => {
+              const runLog = Array.isArray(data[STORAGE.CURRENT_RUN_LOG]) ? data[STORAGE.CURRENT_RUN_LOG] : [];
+              runLog.push({ candidate_id: cId, employee_id: eId, jobInfo: job, timestamp: new Date().toISOString() });
+              chrome.storage.local.set({ [STORAGE.CURRENT_RUN_LOG]: runLog });
+            });
+
+            chrome.runtime.sendMessage({ from: 'background', type: 'progress', text: `Logged: ${job.title}` });
+          } catch (syncErr) {
+            console.error('BG: Immediate loop sync failed', syncErr);
+          }
+        }
+
         await delay(POST_APPLY_WAIT_MS);
       } else {
         await delay(1000);
@@ -779,13 +310,13 @@ async function finalizeRunAndExport() {
         // Load config names for friendly JSON
         let cfg = { candidates: [], employees: [] };
         try {
-          cfg.candidates = await fetch(chrome.runtime.getURL('config/candidates.json')).then(r=>r.json());
-          cfg.employees = await fetch(chrome.runtime.getURL('config/employees.json')).then(r=>r.json());
+          cfg.candidates = await fetch(chrome.runtime.getURL('config/candidates.json')).then(r => r.json());
+          cfg.employees = await fetch(chrome.runtime.getURL('config/employees.json')).then(r => r.json());
         } catch (e) { console.warn('BG: failed to load config names', e); }
 
         const sel = meta.selection || {};
-        const candidateObj = (cfg.candidates||[]).find(c=>c.id===sel.candidate_id) || { id: sel.candidate_id, name: String(sel.candidate_id || 'unknown') };
-        const employeeObj = (cfg.employees||[]).find(e=>e.id===sel.employee_id) || { id: sel.employee_id, name: String(sel.employee_id || 'unknown') };
+        const candidateObj = (cfg.candidates || []).find(c => Number(c.id) === Number(sel.candidate_id)) || { id: sel.candidate_id, name: 'unknown' };
+        const employeeObj = (cfg.employees || []).find(e => Number(e.id) === Number(sel.employee_id)) || { id: sel.employee_id, name: 'unknown' };
 
         // Filter submissions for this candidate (should already match) and prepare export submissions array
         const submissions = (runLog || []).filter(e => Number(e.candidate_id) === Number(sel.candidate_id)).map(e => ({
@@ -804,68 +335,66 @@ async function finalizeRunAndExport() {
           submissions
         };
 
-        // Download single JSON file for this run
-        const jsonStr = JSON.stringify(exportObj, null, 2);
-        const filename = `easyapply_run_${meta.runId}_${candidateObj.id}_${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.json`;
-        const url = 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonStr);
-
-        chrome.downloads.download({ url, filename, conflictAction: 'uniquify', saveAs: false }, async (downloadId) => {
-          if (chrome.runtime.lastError) console.error('BG: finalize download error', chrome.runtime.lastError);
-          else console.log('BG: downloaded run file', filename, downloadId);
-
-          // Aggregate rows by candidate/employee/date for server
-          const map = {};
-          for (const e of runLog || []) {
-            const cid = Number(e.candidate_id || 0);
-            const eid = Number(e.employee_id || 0);
-            // date in YYYY-MM-DD
-            const activity_date = (new Date(e.timestamp)).toISOString().slice(0,10);
-            const key = `${cid}|${eid}|${activity_date}`;
-            if (!map[key]) map[key] = { candidate_id: cid, employee_id: eid, activity_date, activity_count: 0, job_ids: [] };
-            map[key].activity_count += 1;
-            if (e.jobInfo && e.jobInfo.jobId) map[key].job_ids.push(String(e.jobInfo.jobId));
-          }
-          const rows = Object.values(map);
-
-          // Load server API config
-          let apiCfg = null;
-          try { apiCfg = await fetch(chrome.runtime.getURL('config/api_config.json')).then(r=>r.json()); } catch (e) { apiCfg = null; }
-
-          if (apiCfg && apiCfg.api_url) {
-            const payload = { runId: meta.runId, startedAt: meta.startedAt, exportedAt: new Date().toISOString(), default_job_id: apiCfg.default_job_id || null, rows };
-            try {
-              const resp = await fetch(apiCfg.api_url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-              });
-              if (!resp.ok) {
-                const text = await resp.text().catch(()=>null);
-                console.error('BG: server returned error', resp.status, text);
-              } else {
-                try {
-                  const j = await resp.json().catch(()=>null);
-                  console.log('BG: server accepted summary', j);
-                } catch(e) {}
-              }
-            } catch (e) {
-              console.error('BG: failed to send run summary to server', e);
-            }
-          } else {
-            console.warn('BG: no api_url configured; skipping server POST');
-          }
-
-          // clear stored run meta and log (but keep currentSelection for UX)
-          chrome.storage.local.remove([STORAGE.CURRENT_RUN_META, STORAGE.CURRENT_RUN_LOG], () => {
-            console.log('BG: cleared current run meta & log');
-            // notify popup (if open)
-            chrome.runtime.sendMessage({ from: 'background', type: 'done', text: 'Run exported' });
-            resolve(downloadId);
-          });
+        // --- JSON Download ---
+        const jsonContent = JSON.stringify(exportObj, null, 2);
+        const dataUrl = 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonContent);
+        chrome.downloads.download({
+          url: dataUrl,
+          filename: `run_${meta.runId}_${candidateObj.name.replace(/\s+/g, '_')}.json`,
+          saveAs: false
         });
 
+        // --- Server Sync ---
+        // POST to localhost:3000/api/job-activity
+        try {
+          if (submissions.length > 0) {
+            const serverRows = submissions.map(s => {
+              const d = s.timestamp ? s.timestamp.slice(0, 10) : new Date().toISOString().slice(0, 10);
+              return {
+                job_id: s.jobId,
+                job_name: s.title || 'Unknown Job',
+                candidate_id: Number(sel.candidate_id),
+                candidate_name: candidateObj.name,
+                employee_id: Number(sel.employee_id),
+                employee_name: employeeObj.name,
+                activity_date: d,
+                activity_count: 1,
+                notes: `${s.title || 'Unknown Role'} @ ${s.company || 'Unknown Company'}`,
+                last_mod_date: new Date().toISOString()
+              };
+            });
+            console.log('BG: Final check sync ' + serverRows.length + ' rows to server...');
+            const resp = await fetch('http://localhost:3000/api/job-activity', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer 12345'
+              },
+              body: JSON.stringify({ rows: serverRows, runId: meta.runId })
+            });
+
+            if (resp.ok) {
+              console.log('BG: Sync successful');
+              // Clear run meta/log ONLY if sync succeeded
+              chrome.storage.local.remove([STORAGE.CURRENT_RUN_META, STORAGE.CURRENT_RUN_LOG], () => {
+                resolve();
+              });
+            } else {
+              console.error('BG: Sync failed - status:', resp.status);
+              resolve(); // Resolve anyway so we don't hang, but storage is kept
+            }
+          } else {
+            // No submissions to sync, safe to clear
+            chrome.storage.local.remove([STORAGE.CURRENT_RUN_META, STORAGE.CURRENT_RUN_LOG], () => {
+              resolve();
+            });
+          }
+        } catch (serverErr) {
+          console.error('BG: Sync error (Server likely down):', serverErr.message);
+          resolve(); // Resolve anyway, storage is kept for recovery
+        }
+
       } catch (e) {
-        console.error('BG: finalizeRunAndExport error', e);
         reject(e);
       }
     });

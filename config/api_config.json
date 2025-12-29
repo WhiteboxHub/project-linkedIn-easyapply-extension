@@ -1,4 +1,4 @@
 {
-  "api_url": "http://localhost:3000/api/job-activity",
-  "default_job_id": 14
+  "api_url": "https://whitebox-learning.com/api/job-activity",
+  "default_job_id": 116
 }
